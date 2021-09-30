@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,8 +37,8 @@ public class CustProdHistoryService {
      */
     public Set<Product> getViewedProductsByCustomer(Integer customerId, Integer datesToView) {
         Customer customer = customerRepository.findById(customerId).get();
-        LocalDate today = LocalDate.now();
-        LocalDate range = today.minusDays(datesToView);
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime range = today.minusDays(datesToView);
 
         List<ViewedProduct> viewedProducts = customer.getViewedProducts().stream()
                 .sorted(Comparator.comparing(ViewedProduct::getViewedDate))
@@ -76,7 +77,7 @@ public class CustProdHistoryService {
 
         //Every insert for Customer with Id equals to 3 will simulate that viewed a product
         //in previous days, so we can test retrieve products for X days
-        LocalDate dateViewed = LocalDate.now();
+        LocalDateTime dateViewed = LocalDateTime.now();
         if (customerId == 3) {
             dateViewed = dateViewed.minusDays(5);
         }
@@ -116,7 +117,7 @@ public class CustProdHistoryService {
         Customer customer = customerRepository.findById(customerId).get();
         for (ViewedProduct product : customer.getViewedProducts()) {
             if (productId == product.getProductId()) {
-                product.setViewedDate(LocalDate.now());
+                product.setViewedDate(LocalDateTime.now());
                 customerRepository.save(customer);
                 break;
             }

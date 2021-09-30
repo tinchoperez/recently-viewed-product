@@ -2,6 +2,7 @@ package com.exercise.recentlyviewedprod.models;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class ViewedProduct {
@@ -15,12 +16,12 @@ public class ViewedProduct {
 
     private int productId;
 
-    private LocalDate viewedDate;
+    private LocalDateTime viewedDate;
 
     public ViewedProduct() {
     }
 
-    public ViewedProduct(int customerId, int productId, LocalDate viewedDate) {
+    public ViewedProduct(int customerId, int productId, LocalDateTime viewedDate) {
         this.customerId = customerId;
         this.productId = productId;
         this.viewedDate = viewedDate;
@@ -50,11 +51,11 @@ public class ViewedProduct {
         this.productId = productId;
     }
 
-    public LocalDate getViewedDate() {
+    public LocalDateTime getViewedDate() {
         return viewedDate;
     }
 
-    public void setViewedDate(LocalDate viewedDate) {
+    public void setViewedDate(LocalDateTime viewedDate) {
         this.viewedDate = viewedDate;
     }
 }
