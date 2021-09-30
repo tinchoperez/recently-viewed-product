@@ -2,12 +2,10 @@ package com.exercise.recentlyviewedprod.models;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Customer {
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String name;

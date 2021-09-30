@@ -1,12 +1,10 @@
 package com.exercise.recentlyviewedprod.models;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class Product {
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String productName;

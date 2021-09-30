@@ -1,7 +1,6 @@
 package com.exercise.recentlyviewedprod.models;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
