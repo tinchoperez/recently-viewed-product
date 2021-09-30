@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +34,7 @@ public class CustProdHistoryService {
      * @param datesToView
      * @return
      */
-    public List<Product> getViewedProductsByCustomer(Integer customerId, Integer datesToView) {
+    public Set<Product> getViewedProductsByCustomer(Integer customerId, Integer datesToView) {
         Customer customer = customerRepository.findById(customerId).get();
         LocalDate today = LocalDate.now();
         LocalDate range = today.minusDays(datesToView);
@@ -46,7 +44,7 @@ public class CustProdHistoryService {
                 .filter(viewedProduct -> viewedProduct.getViewedDate().isAfter(range))
                 .collect(Collectors.toList());
 
-        List<Product> products = new LinkedList<>();
+        Set<Product> products = new HashSet<>();
         for (ViewedProduct viewedProduct:viewedProducts) {
             products.add(productRepository.findById(viewedProduct.getProductId()).get());
         }
@@ -76,10 +74,19 @@ public class CustProdHistoryService {
             viewedProducts.remove(viewedProducts.size() - 1);
         }
 
-        ViewedProduct viewedProduct = new ViewedProduct(customerId, productId, LocalDate.now());
-        viewedProductRepository.save(viewedProduct);
-        customer.getViewedProducts().add(viewedProduct);
-        customerRepository.save(customer);
+        //Every insert for Customer with Id equals to 3 will simulate that viewed a product
+        //in previous days, so we can test retrieve products for X days
+        LocalDate dateViewed = LocalDate.now();
+        if (customerId == 3) {
+            dateViewed = dateViewed.minusDays(5);
+        }
+
+        if (!isProductAlreadyViewed(customer, productId)) {
+            ViewedProduct viewedProduct = new ViewedProduct(customerId, productId, dateViewed);
+            viewedProductRepository.save(viewedProduct);
+            customer.getViewedProducts().add(viewedProduct);
+            customerRepository.save(customer);
+        }
     }
 
     /**
@@ -91,7 +98,7 @@ public class CustProdHistoryService {
     public void deleteProduct(Integer customerId, Integer productId) {
         Customer customer = customerRepository.findById(customerId).get();
         for (ViewedProduct product : customer.getViewedProducts()) {
-            if (productId == product.getId()) {
+            if (productId == product.getProductId()) {
                 customer.getViewedProducts().remove(product);
                 viewedProductRepository.delete(product);
                 customerRepository.save(customer);
@@ -108,7 +115,7 @@ public class CustProdHistoryService {
     public void updateViewedProduct(Integer customerId, Integer productId) {
         Customer customer = customerRepository.findById(customerId).get();
         for (ViewedProduct product : customer.getViewedProducts()) {
-            if (productId == product.getId()) {
+            if (productId == product.getProductId()) {
                 product.setViewedDate(LocalDate.now());
                 customerRepository.save(customer);
                 break;
@@ -116,4 +123,13 @@ public class CustProdHistoryService {
         }
     }
 
+    private boolean isProductAlreadyViewed(Customer customer, Integer productId) {
+        List<ViewedProduct> viewedProducts = customer.getViewedProducts();
+        for (ViewedProduct viewedProduct:viewedProducts) {
+            if (productId == viewedProduct.getProductId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/rvp")
@@ -15,7 +16,7 @@ public class CustProdHistoryController {
     private CustProdHistoryService service;
 
     @GetMapping("/viewedProducts/{customerId}/{datesToView}")
-    public List<Product> getViewedProductsByCustomer(@PathVariable Integer customerId, @PathVariable Integer datesToView) {
+    public Set<Product> getViewedProductsByCustomer(@PathVariable Integer customerId, @PathVariable Integer datesToView) {
         return service.getViewedProductsByCustomer(customerId, datesToView);
     }
 
